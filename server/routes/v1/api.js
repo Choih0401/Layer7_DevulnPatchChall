@@ -125,23 +125,13 @@ export const leaderboard = function (req, res) {
         })
 }
 
-export const updateScore = function (req, res) {
+export const updateScore = async function (req, res) {
     var {
         id,
         question,
         content
     } = req.body
-    var score
-    let file = 'code/code.py'
-    fs.writeFile(file, content, 'utf8', function (err) {})
-    var compile = spawn('python', [file])
-    compile.stdout.on('data', function (data) {
-        score = data.toString('utf8').replace(/\n+$/, '')
-        score *= 1
-    })
-    compile.stderr.on('data', function (data) {
-        score = 0;
-    })
+    var score = await compile(id, question, content)
     if (!id) {
         res.json({
             code: 500,
@@ -157,13 +147,13 @@ export const updateScore = function (req, res) {
                         if (err) {
                             callback({
                                 err: 'QUERY',
-                                message: 'QUERY ERROR'
+                                message: 'QUERY ERROR01'
                             })
                         } else {
                             if (result.length == 0) {
-                                callback(null, '')
+                                callback(null, result)
                             } else {
-                                callback(null, '')
+                                callback(null, result)
                             }
                         }
                     })
@@ -175,7 +165,7 @@ export const updateScore = function (req, res) {
                             if (err) {
                                 callback({
                                     err: 'QUERY',
-                                    message: 'QUERY ERROR'
+                                    message: 'QUERY ERROR02'
                                 })
                             } else {
                                 callback(null, '')
@@ -187,16 +177,16 @@ export const updateScore = function (req, res) {
                             if(err){
                                 callback({
                                     err: 'QUERY',
-                                    message: 'QUERY ERROR'
+                                    message: 'QUERY ERROR03'
                                 })
                             }else{
                                 if(score > result[0].score){
-                                    var sql2 = 'UPDATAE log SET score = ? WHERE user = ? AND question = ?';
+                                    var sql2 = 'UPDATE log SET score = ? WHERE user = ? AND question = ?';
                                     connection.query(sql2, [score, id, question], (err, result) => {
                                         if(err){
                                             callback({
                                                 err: 'QUERY',
-                                                message: 'QUERY ERROR'
+                                                message: 'QUERY ERROR04'
                                             })
                                         }else{
                                             callback(null, '');
@@ -382,5 +372,22 @@ export const allScore = function (req, res) {
                 detail: result
             })
         }
+    })
+}
+
+var compile = function(id, question, content){
+    return new Promise(function(resolve, reject){
+        let file = 'code/code.py'
+        fs.writeFile(file, content, 'utf8', function (err) {})
+        var compile = spawn('python', [file])
+        compile.stdout.on('data', function (data) {
+            var score = data.toString('utf8').replace(/\n+$/, '')
+            score *= 1
+            resolve(score)
+        })
+        compile.stderr.on('data', function (data) {
+            var score = 0
+            resolve(score)
+        })
     })
 }
