@@ -329,7 +329,7 @@ export const allScore = function (req, res) {
         id
     } = req.body
     var score = 0
-    async.waterfall([
+    async.waterfall([   
         (callback) => {
             var sql =  'SELECT * FROM log WHERE user = ?'
             connection.query(sql, [id], (err, result) => {
@@ -338,11 +338,16 @@ export const allScore = function (req, res) {
                         err: 'QUERY',
                         message: 'QUERY ERROR'
                     })
-                }else{
+                }else if(result.length != 0){
                     for(let i = 0; i < result.length; i++){
                         score += result[i].score
                     }
                     callback(null, {score: score})
+                }else{
+                    callback({
+                        err: 'id',
+                        message: 'ID NOTFOUND'
+                    })
                 }
             })
         },
