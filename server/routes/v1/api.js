@@ -345,6 +345,19 @@ export const allScore = function (req, res) {
                     callback(null, {score: score})
                 }
             })
+        },
+        (resultData, callback) => {
+            var sql = 'UPDATE user_list SET score = ? WHERE id = ?'
+            connection.query(sql, [score, id], (err, result) => {
+                if (err) {
+                    callback({
+                        err: 'QUERY',
+                        message: 'QUERY ERROR'
+                    })
+                } else {
+                    callback(null, '')
+                }
+            })
         }
     ],
     (err, result) => {
