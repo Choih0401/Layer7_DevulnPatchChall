@@ -10,7 +10,7 @@ import v1 from './routes/v1/v1'
 
 const app = express()
 
-app.set('port', process.env.PORT || 5000)
+app.set('port', process.env.PORT || 7777)
 
 app.use(express.json())
 app.use(
