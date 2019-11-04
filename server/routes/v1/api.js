@@ -128,7 +128,8 @@ export const leaderboard = function (req, res) {
 export const updateScore = function (req, res) {
     var {
         id,
-        question
+        question,
+        content
     } = req.body
     var score
     let file = 'code/code.py'
