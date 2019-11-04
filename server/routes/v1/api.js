@@ -300,7 +300,7 @@ export const showQuestion = function (req, res) {
                         message: 'QUERY ERROR'
                     })
                 }else{
-                    callback(null, '')
+                    callback(null, {question: result})
                 }
             })
         }
@@ -318,7 +318,7 @@ export const showQuestion = function (req, res) {
                 code: 200,
                 v: 'v1',
                 status: 'SUCCESS',
-                detail: 'Show Content Successful'
+                detail: result
             })
         }
     })
