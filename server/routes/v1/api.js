@@ -355,7 +355,7 @@ export const allScore = function (req, res) {
                         message: 'QUERY ERROR'
                     })
                 } else {
-                    callback(null, '')
+                    callback(null, resultData)
                 }
             })
         }
