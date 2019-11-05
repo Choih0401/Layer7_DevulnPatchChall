@@ -81,7 +81,7 @@ export const signUp = function (req, res) {
 export const leaderboard = function (req, res) {
     async.waterfall([
             (callback) => {
-                var sql = 'SELECT * FROM user_list WHERE is_use = 0 ORDER BY question desc, compare, endtime'
+                var sql = 'SELECT * FROM user_list WHERE is_use = 0 ORDER BY score desc, compare, endtime'
                 connection.query(sql, [], (err, result) => {
                     if (err) {
                         callback({
@@ -94,8 +94,8 @@ export const leaderboard = function (req, res) {
                             result.forEach((v, i) => {
                                 arr.push({
                                     name: v.name,
-                                    score: v.compare,
-                                    question: v.question
+                                    compare: v.compare,
+                                    score: v.score
                                 })
                             })
                             callback(null, arr)
@@ -159,7 +159,7 @@ export const updateScore = async function (req, res) {
                     })
                 },
                 (resultData, callback) => {
-                    if(resultData.length == 0){
+                    if (resultData.length == 0) {
                         var sql = 'INSERT INTO log (user, question, score) values(?, ?, ?)'
                         connection.query(sql, [id, question, score], (err, result) => {
                             if (err) {
@@ -168,32 +168,38 @@ export const updateScore = async function (req, res) {
                                     message: 'QUERY ERROR02'
                                 })
                             } else {
-                                callback(null, {score: score})
+                                callback(null, {
+                                    score: score
+                                })
                             }
                         })
-                    }else{
+                    } else {
                         var sql = 'SELECT * FROM log WHERE user = ? AND question = ?';
                         connection.query(sql, [id, question], (err, result) => {
-                            if(err){
+                            if (err) {
                                 callback({
                                     err: 'QUERY',
                                     message: 'QUERY ERROR03'
                                 })
-                            }else{
-                                if(score > result[0].score){
+                            } else {
+                                if (score > result[0].score) {
                                     var sql2 = 'UPDATE log SET score = ? WHERE user = ? AND question = ?';
                                     connection.query(sql2, [score, id, question], (err, result) => {
-                                        if(err){
+                                        if (err) {
                                             callback({
                                                 err: 'QUERY',
                                                 message: 'QUERY ERROR04'
                                             })
-                                        }else{
-                                            callback(null, {score: score});
+                                        } else {
+                                            callback(null, {
+                                                score: score
+                                            });
                                         }
                                     })
-                                }else{
-                                    callback(null, {score: score});
+                                } else {
+                                    callback(null, {
+                                        score: score
+                                    });
                                 }
                             }
                         })
@@ -282,37 +288,39 @@ export const showQuestion = function (req, res) {
     } = req.body
 
     async.waterfall([
-        (callback) => {
-            var sql = 'SELECT * FROM question WHERE idx = ?';
-            connection.query(sql, [idx], (err, result) => {
-                if(err){
-                    callback({
-                        err: 'QUERY',
-                        message: 'QUERY ERROR'
-                    })
-                }else{
-                    callback(null, {question: result})
-                }
-            })
-        }
-    ],
-    (err, result) => {
-        if (err) {
-            res.json({
-                code: 500,
-                v: 'v1',
-                status: 'ERR_SHOWCONTENT',
-                detail: err
-            })
-        } else {
-            res.json({
-                code: 200,
-                v: 'v1',
-                status: 'SUCCESS',
-                detail: result
-            })
-        }
-    })
+            (callback) => {
+                var sql = 'SELECT * FROM question WHERE idx = ?';
+                connection.query(sql, [idx], (err, result) => {
+                    if (err) {
+                        callback({
+                            err: 'QUERY',
+                            message: 'QUERY ERROR'
+                        })
+                    } else {
+                        callback(null, {
+                            question: result
+                        })
+                    }
+                })
+            }
+        ],
+        (err, result) => {
+            if (err) {
+                res.json({
+                    code: 500,
+                    v: 'v1',
+                    status: 'ERR_SHOWCONTENT',
+                    detail: err
+                })
+            } else {
+                res.json({
+                    code: 200,
+                    v: 'v1',
+                    status: 'SUCCESS',
+                    detail: result
+                })
+            }
+        })
 }
 
 export const allScore = function (req, res) {
@@ -320,63 +328,65 @@ export const allScore = function (req, res) {
         id
     } = req.body
     var score = 0
-    async.waterfall([   
-        (callback) => {
-            var sql =  'SELECT * FROM log WHERE user = ?'
-            connection.query(sql, [id], (err, result) => {
-                if(err){
-                    callback({
-                        err: 'QUERY',
-                        message: 'QUERY ERROR'
-                    })
-                }else if(result.length != 0){
-                    for(let i = 0; i < result.length; i++){
-                        score += result[i].score
+    async.waterfall([
+            (callback) => {
+                var sql = 'SELECT * FROM log WHERE user = ?'
+                connection.query(sql, [id], (err, result) => {
+                    if (err) {
+                        callback({
+                            err: 'QUERY',
+                            message: 'QUERY ERROR'
+                        })
+                    } else if (result.length != 0) {
+                        for (let i = 0; i < result.length; i++) {
+                            score += result[i].score
+                        }
+                        callback(null, {
+                            score: score
+                        })
+                    } else {
+                        callback({
+                            err: 'id',
+                            message: 'ID NOTFOUND'
+                        })
                     }
-                    callback(null, {score: score})
-                }else{
-                    callback({
-                        err: 'id',
-                        message: 'ID NOTFOUND'
-                    })
-                }
-            })
-        },
-        (resultData, callback) => {
-            var sql = 'UPDATE user_list SET score = ? WHERE id = ?'
-            connection.query(sql, [score, id], (err, result) => {
-                if (err) {
-                    callback({
-                        err: 'QUERY',
-                        message: 'QUERY ERROR'
-                    })
-                } else {
-                    callback(null, resultData)
-                }
-            })
-        }
-    ],
-    (err, result) => {
-        if (err) {
-            res.json({
-                code: 500,
-                v: 'v1',
-                status: 'ERR_TIMECOMPARE',
-                detail: err
-            })
-        }else{
-            res.json({
-                code: 200,
-                v: 'v1',
-                status: 'SUCCESS',
-                detail: result
-            })
-        }
-    })
+                })
+            },
+            (resultData, callback) => {
+                var sql = 'UPDATE user_list SET score = ? WHERE id = ?'
+                connection.query(sql, [score, id], (err, result) => {
+                    if (err) {
+                        callback({
+                            err: 'QUERY',
+                            message: 'QUERY ERROR'
+                        })
+                    } else {
+                        callback(null, resultData)
+                    }
+                })
+            }
+        ],
+        (err, result) => {
+            if (err) {
+                res.json({
+                    code: 500,
+                    v: 'v1',
+                    status: 'ERR_TIMECOMPARE',
+                    detail: err
+                })
+            } else {
+                res.json({
+                    code: 200,
+                    v: 'v1',
+                    status: 'SUCCESS',
+                    detail: result
+                })
+            }
+        })
 }
 
-var compile = function(id, question, content){
-    return new Promise(function(resolve, reject){
+var compile = function (id, question, content) {
+    return new Promise(function (resolve, reject) {
         let file = 'code/code.py'
         fs.writeFile(file, content, 'utf8', function (err) {})
         var compile = spawn('python', [file])
