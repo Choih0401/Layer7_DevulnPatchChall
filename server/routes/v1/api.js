@@ -25,7 +25,7 @@ export const signUp = function (req, res) {
         async.waterfall([
                 (callback) => {
                     password = crypto.createHash('sha512').update(crypto.createHash('sha512').update(password).digest('base64')).digest('base64');
-                    var sql = 'SELECT count(*) as count FROM user_list WHERE id = ? AND is_use = 1'
+                    var sql = 'SELECT count(*) as count FROM user_list WHERE id = ?'
                     connection.query(sql, [id], (err, result) => {
                         if (err) {
                             callback({
