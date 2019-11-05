@@ -1,0 +1,8 @@
+{
+  "short_name": "BlindCoding",
+  "name": "Layer7_BlindCoding",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
