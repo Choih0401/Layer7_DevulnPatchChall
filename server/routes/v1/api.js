@@ -168,7 +168,7 @@ export const updateScore = async function (req, res) {
                                     message: 'QUERY ERROR02'
                                 })
                             } else {
-                                callback(null, '')
+                                callback(null, {score: score})
                             }
                         })
                     }else{
@@ -189,11 +189,11 @@ export const updateScore = async function (req, res) {
                                                 message: 'QUERY ERROR04'
                                             })
                                         }else{
-                                            callback(null, '');
+                                            callback(null, {score: score});
                                         }
                                     })
                                 }else{
-                                    callback(null, '');
+                                    callback(null, {score: score});
                                 }
                             }
                         })
@@ -213,7 +213,7 @@ export const updateScore = async function (req, res) {
                         code: 200,
                         v: 'v1',
                         status: 'SUCCESS',
-                        detail: 'Update score successful'
+                        detail: result
                     })
                 }
             })
