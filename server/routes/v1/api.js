@@ -131,6 +131,18 @@ export const updateScore = async function (req, res) {
         question,
         content
     } = req.body
+    content = content.replace("#include <stdio.h>", `#include <stdio.h>\n
+    #include <sys/prctl.h>\n
+    #include <linux/seccomp.h>\n
+    #include <unistd.h>\n
+    \n
+    void sandboxing( void )\n
+    {\n
+        alarm(3);\n
+        prctl(PR_SET_SECCOMP, SECCOMP_MODE_STRICT);\n
+    }\n`)
+    content = content.replace(/main\s*\(.*\)\s*{/, `main() {\n
+    sandboxing();\n`)
     var score = await compile(id, question, content)
     if (!id) {
         res.json({
@@ -387,7 +399,7 @@ export const allScore = function (req, res) {
 
 var compile = function (id, question, content) {
     return new Promise(function (resolve, reject) {
-        let file = 'code/code.py'
+        let file = 'code/code.c'
         fs.writeFile(file, content, 'utf8', function (err) {})
         var compile = spawn('python', [file])
         compile.stdout.on('data', function (data) {
