@@ -325,23 +325,30 @@ export const timeCompare = function (req, res) {
 }
 
 export const showQuestion = function (req, res) {
-    var {
-        idx
-    } = req.body
-
     async.waterfall([
             (callback) => {
-                var sql = 'SELECT * FROM question WHERE idx = ?';
-                connection.query(sql, [idx], (err, result) => {
+                var sql = 'SELECT * FROM question';
+                connection.query(sql, [], (err, result) => {
                     if (err) {
                         callback({
                             err: 'QUERY',
                             message: 'QUERY ERROR'
                         })
                     } else {
-                        callback(null, {
-                            question: result
-                        })
+                        let arr = []
+                        if (result.length != 0) {
+                            result.forEach((v, i) => {
+                                arr.push({
+                                    idx: v.idx,
+                                    title: v.title,
+                                    content: v.content,
+                                    compile: v.compile
+                                })
+                            })
+                            callback(null, arr)
+                        } else {
+                            callback(null, arr)
+                        }
                     }
                 })
             }
