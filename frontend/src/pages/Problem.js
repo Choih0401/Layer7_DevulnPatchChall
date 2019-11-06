@@ -19,22 +19,23 @@ class Problem extends Component {
   }
 
   componentWillMount() {
-    const questionIndex = this.props.match.params.num;
-    if (this.props.location === undefined) {
-      /*fetch(URL + "challenge/question/", {
-        method: "POST"
-      })
-        .then(response => response.json())
-        .then(json => {
-          cosnt question = json.detail.question[questionIndex];
-          this.setState({
-            ...this.state,
-            prob_title: question.title,
-            prob_content: question.content,
-            prob_options: question.compile
-          });
-        }); // set current solvedCnt*/
-    }
+    const questionIndex = this.props.match.params.num - 1;
+
+    console.log(questionIndex);
+    fetch(URL + "challenge/question/", {
+      method: "POST"
+    })
+      .then(response => response.json())
+      .then(json => {
+        const question = json.detail[questionIndex];
+        console.log(json.detail[questionIndex]);
+        this.setState({
+          ...this.state,
+          prob_title: question.title,
+          prob_content: question.content,
+          prob_options: question.compile
+        });
+      }); // set current solvedCnt
   }
 
   handleChange = (newValue, event) => {
@@ -77,7 +78,9 @@ class Problem extends Component {
     return (
       <div style={{ textAlign: "center" }}>
         <h2 style={{ marginTop: "2vh" }}>{this.state.prob_title}</h2>
-        <div style={{ marginTop: "1vh" }}>{this.state.prob_content}</div>
+        <div style={{ marginTop: "1vh" }}>
+          <a href={this.state.prob_content}>View Binary Source</a>
+        </div>
         <div>{this.state.prob_options}</div>
         <br />
         <div style={{ textAlign: "left" }}>

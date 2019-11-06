@@ -8,38 +8,7 @@ import "../css/Problem.css";
 
 class ProblemList extends Component {
   state = {
-    problems: [
-      {
-        idx: 1,
-        title: "test01",
-        content: "content01",
-        compile: "gcc -o a a.c"
-      },
-      {
-        idx: 2,
-        title: "test02",
-        content: "content01",
-        compile: "gcc -o a a.c"
-      },
-      {
-        idx: 3,
-        title: "test023",
-        content: "content01",
-        compile: "gcc -o a a.c"
-      },
-      {
-        idx: 4,
-        title: "test01234",
-        content: "content01",
-        compile: "gcc -o a a.c"
-      },
-      {
-        idx: 5,
-        title: "test015",
-        content: "content01",
-        compile: "gcc -o a a.c"
-      }
-    ]
+    problems: []
   };
 
   constructor(props) {
@@ -49,6 +18,7 @@ class ProblemList extends Component {
 
   _renderRanks = () => {
     let i = 1;
+    console.log(this.state);
     const ranks = this.state.problems.map(problem => {
       return (
         <span
@@ -83,7 +53,7 @@ class ProblemList extends Component {
     event.preventDefault();
     if (
       window.confirm(
-        "You can't be logged in again if you end the challenge. Proceed?\n"
+        "You can't log in again if you end the challenge now. Proceed?\n"
       )
     ) {
       // timecompare
@@ -116,17 +86,17 @@ class ProblemList extends Component {
     }
   };
 
-  componentWillMount() {
-    /*fetch(URL + "challenge/question/", {
+  componentDidMount() {
+    fetch(URL + "challenge/question/", {
       method: "POST"
     })
       .then(response => response.json())
       .then(json => {
         this.setState({
           ...this.state,
-          problems: json.detail.question
+          problems: json.detail
         });
-      }); // set current solvedCnt*/
+      }); // set current solvedCnt
   }
 
   render() {
