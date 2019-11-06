@@ -58,7 +58,7 @@ class Problem extends Component {
         "&content=" +
         encodeURI(this.state.content.replace(/\+/gi, "%2b")) +
         "&question=" +
-        this.props.match.params.n
+        this.props.match.params.num
     })
       .then(response => response.json())
       .then(json => {
