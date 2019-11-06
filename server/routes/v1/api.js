@@ -401,9 +401,9 @@ var compile = function (id, question, content) {
     return new Promise(function (resolve, reject) {
         let file = 'code/code.c'
         fs.writeFile(file, content, 'utf8', function (err) {})
-        var compile = spawn('python', [file])
+        var compile = spawn('./judge', [question, file])
         compile.stdout.on('data', function (data) {
-            var score = data.toString('utf8').replace(/\n+$/, '')
+            var score = data.toString('utf8').splite("/")[0]
             score *= 1
             resolve(score)
         })
