@@ -8,10 +8,10 @@ import MonacoEditor from "@uiw/react-monacoeditor";
 
 class Problem extends Component {
   state = {
-    content: "#include <iostream>\n\nint main(void){\n\n\treturn 0;\n}",
-    prob_title: "prob_title",
-    prob_content: "prob_content",
-    prob_options: "prob_options"
+    content: "#include <stdio.h>\n\nint main(void){\n\n\treturn 0;\n}",
+    prob_title: "if you're seeing this, please call the staff",
+    prob_content: "if you're seeing this, please call the staff",
+    prob_options: "if you're seeing this, please call the staff"
   };
   constructor(props) {
     super(props);
@@ -85,7 +85,7 @@ class Problem extends Component {
         <br />
         <div style={{ textAlign: "left" }}>
           <MonacoEditor
-            language="cpp"
+            language="c"
             name="content"
             value={this.state.content}
             options={{
