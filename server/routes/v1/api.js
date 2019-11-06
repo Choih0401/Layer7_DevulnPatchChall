@@ -143,15 +143,33 @@ export const updateScore = async function (req, res) {
         question,
         content
     } = req.body
-    content = content.replace("#include <stdio.h>", `#include <stdio.h>\n
+    content = content.replace("#include <stdio.h>", `#include <stdio.h>
 #include <sys/prctl.h>
-#include <linux/seccomp.h>
+#include <seccomp.h>
 #include <unistd.h>
-
+    
 void sandboxing( void )
 {
     alarm(3);
-    prctl(PR_SET_SECCOMP, SECCOMP_MODE_STRICT);
+    scmp_filter_ctx ctx;
+    ctx = seccomp_init(SCMP_ACT_KILL); // default action: kill
+    
+    // setup basic whitelist
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rt_sigreturn), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lstat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(stat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(open), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lseek), 0);
+    seccomp_load(ctx);
 }\n`)
     content = content.replace(/main\s*\(.*\)\s*{/, `main() {
 sandboxing();`)
@@ -416,10 +434,12 @@ var compile = function (id, question, content) {
         var compile = spawn('./judge', [question, content])
         compile.stdout.on('data', function (data) {
             var score = data.toString('utf8').split("/")[0]
+            console.log(score)
             score *= 1
             resolve(score)
         })
         compile.stderr.on('data', function (data) {
+            console.log(score)
             var score = 0
             resolve(score)
         })
