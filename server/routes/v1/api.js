@@ -14,6 +14,18 @@ export const signUp = function (req, res) {
         email,
         phonenumber
     } = req.body
+    if(id > 50){
+        id = id.slice(0, 50)
+    }
+    if(name > 50){
+        name = name.slice(0, 50)
+    }
+    if(email > 50){
+        email = email.slice(0, 50)
+    }
+    if(phonenumber > 50){
+        phonenumber = phonenumber.slice(0, 50)
+    }
     if (!id || !name || !password) {
         res.json({
             code: 500,
@@ -25,7 +37,7 @@ export const signUp = function (req, res) {
         async.waterfall([
                 (callback) => {
                     password = crypto.createHash('sha512').update(crypto.createHash('sha512').update(password).digest('base64')).digest('base64');
-                    var sql = 'SELECT count(*) as count FROM user_list WHERE id = ? AND is_use = 1'
+                    var sql = 'SELECT count(*) as count FROM user_list WHERE id = ?'
                     connection.query(sql, [id], (err, result) => {
                         if (err) {
                             callback({
@@ -131,6 +143,36 @@ export const updateScore = async function (req, res) {
         question,
         content
     } = req.body
+    content = content.replace("#include <stdio.h>", `#include <stdio.h>
+#include <sys/prctl.h>
+#include <seccomp.h>
+#include <unistd.h>
+    
+void sandboxing( void )
+{
+    alarm(3);
+    scmp_filter_ctx ctx;
+    ctx = seccomp_init(SCMP_ACT_KILL); // default action: kill
+    
+    // setup basic whitelist
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(rt_sigreturn), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(fstat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lstat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(brk), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(mmap), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(munmap), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(stat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(open), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(lseek), 0);
+    seccomp_load(ctx);
+}\n`)
+    content = content.replace(/main\s*\(.*\)\s*{/, `main() {
+sandboxing();`)
     var score = await compile(id, question, content)
     if (!id) {
         res.json({
@@ -387,15 +429,15 @@ export const allScore = function (req, res) {
 
 var compile = function (id, question, content) {
     return new Promise(function (resolve, reject) {
-        let file = 'code/code.py'
+        let file = 'code.c'
         fs.writeFile(file, content, 'utf8', function (err) {})
-        var compile = spawn('python', [file])
+        var compile = spawn('./judge', [question, "code.c"])
         compile.stdout.on('data', function (data) {
-            var score = data.toString('utf8').replace(/\n+$/, '')
-            score *= 1
-            resolve(score)
+            resolve((data.toString('utf8').split("/")[0]) * 1)
         })
         compile.stderr.on('data', function (data) {
+            console.log(score)
+            console.log("fail")
             var score = 0
             resolve(score)
         })
