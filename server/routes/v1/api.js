@@ -399,9 +399,10 @@ export const allScore = function (req, res) {
 
 var compile = function (id, question, content) {
     return new Promise(function (resolve, reject) {
-        let file = 'code/code.c'
+        let file = 'code/code.cpp'
         fs.writeFile(file, content, 'utf8', function (err) {})
         var compile = spawn('./judge ' + question + ' ' + file)
+
         compile.stdout.on('data', function (data) {
             var score = data.toString('utf8').splite("/")[0]
             score *= 1
