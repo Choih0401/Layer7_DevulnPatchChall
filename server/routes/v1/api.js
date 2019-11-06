@@ -431,15 +431,13 @@ var compile = function (id, question, content) {
     return new Promise(function (resolve, reject) {
         let file = 'code.c'
         fs.writeFile(file, content, 'utf8', function (err) {})
-        var compile = spawn('./judge', [question, content])
+        var compile = spawn('./judge', [question, "code.c"])
         compile.stdout.on('data', function (data) {
-            var score = data.toString('utf8').split("/")[0]
-            console.log(score)
-            score *= 1
-            resolve(score)
+            resolve((data.toString('utf8').split("/")[0]) * 1)
         })
         compile.stderr.on('data', function (data) {
             console.log(score)
+            console.log("fail")
             var score = 0
             resolve(score)
         })
