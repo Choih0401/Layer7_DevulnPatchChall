@@ -56,7 +56,7 @@ class Problem extends Component {
         "id=" +
         this.props.store.status.id +
         "&content=" +
-        this.state.content.replace(/\+/gi, "%2b") +
+        encodeURI(this.state.content.replace(/\+/gi, "%2b")) +
         "&question=" +
         this.props.match.params.n
     })
