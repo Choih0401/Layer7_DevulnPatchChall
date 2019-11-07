@@ -1,6 +1,6 @@
 import React from "react";
 
-function LeaderBoard({ username, score, question }) {
+function LeaderBoard({ username, score, time }) {
   return (
     <li
       style={{
@@ -11,7 +11,7 @@ function LeaderBoard({ username, score, question }) {
     >
       <span margin={{}}>{username}</span>
       <span style={{ position: "absolute", right: "50%", textAlign: "center" }}>
-        {score}
+        {time}
       </span>
       <span
         style={{
@@ -21,7 +21,7 @@ function LeaderBoard({ username, score, question }) {
           textAlign: "center"
         }}
       >
-        {question}
+        {score}
       </span>
     </li>
   );

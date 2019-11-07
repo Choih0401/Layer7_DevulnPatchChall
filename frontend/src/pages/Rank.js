@@ -15,7 +15,7 @@ class Rank extends Component {
             key={i++}
             username={rank.name}
             score={rank.score}
-            question={rank.question}
+            time={rank.time}
           />
         </div>
       );
@@ -64,7 +64,7 @@ class Rank extends Component {
                 textAlign: "center"
               }}
             >
-              SCORE
+              TIME/SEC
             </span>
             <span
               style={{

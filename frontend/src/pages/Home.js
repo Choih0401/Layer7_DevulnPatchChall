@@ -113,15 +113,10 @@ class Home extends Component {
                 <p className="text-muted">
                   Fill your forms at the registration page to get started.
                   <br />
-                  After that, check the outputs that you're supposed to make by
-                  writing codes.
+                  Find the vulnerabilities in the given binary and make it safe
+                  to get the score.
                   <br />
-                  Then wear a blindfold, and select the programming language
-                  that you want to use. Now you're ready to go for the
-                  challenges.
-                  <br />
-                  You can continue to the next level if the output that you've
-                  made is correct. Cheer up!
+                  The number of the vulnerabilities is unknown. Good Luck!
                 </p>
               </div>
             </div>
