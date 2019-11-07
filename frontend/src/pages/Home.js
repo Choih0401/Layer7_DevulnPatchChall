@@ -7,6 +7,9 @@ import "../css/Home.css";
 import yg_pic from "../img/team/1.jpg";
 import king_pic from "../img/team/2.jpg";
 import hw_pic from "../img/team/3.jpg";
+import kb_pic from "../img/team/4.jpg";
+import sh_pic from "../img/team/5.jpg";
+import jt_pic from "../img/team/6.jpg";
 
 class Home extends Component {
   state = {
@@ -18,7 +21,7 @@ class Home extends Component {
   };
   constructor(props) {
     super(props);
-    if (props.store.login.status === "SUCCESS") props.history.push("/problem/");
+    if (props.store.login.status === "SUCCESS") props.history.push("/list/");
   }
   handleChange = event => {
     const { name, value } = event.target;
@@ -159,6 +162,36 @@ class Home extends Component {
                     alt="Face of a handsome guy"
                   />
                   <h4>Choi Hyunwoo</h4>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="team-member">
+                  <img
+                    className="mx-auto rounded-circle"
+                    src={kb_pic}
+                    alt="Face of a handsome guy"
+                  />
+                  <h4>Chung KyungBin</h4>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="team-member">
+                  <img
+                    className="mx-auto rounded-circle"
+                    src={sh_pic}
+                    alt="Face of a handsome guy"
+                  />
+                  <h4>Lee SooHyuk</h4>
+                </div>
+              </div>
+              <div className="col-sm-4">
+                <div className="team-member">
+                  <img
+                    className="mx-auto rounded-circle"
+                    src={jt_pic}
+                    alt="Face of a handsome guy"
+                  />
+                  <h4>Kim JunTae</h4>
                 </div>
               </div>
             </div>
