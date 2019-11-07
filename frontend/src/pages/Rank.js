@@ -15,7 +15,7 @@ class Rank extends Component {
             key={i++}
             username={rank.name}
             score={rank.score}
-            time={rank.time}
+            time={rank.compare}
           />
         </div>
       );
