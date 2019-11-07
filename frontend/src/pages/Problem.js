@@ -79,7 +79,13 @@ class Problem extends Component {
       <div style={{ textAlign: "center" }}>
         <h2 style={{ marginTop: "2vh" }}>{this.state.prob_title}</h2>
         <div style={{ marginTop: "1vh" }}>
-          <a href={this.state.prob_content}>View Binary Source</a>
+          <a
+            rel="noopener noreferrer"
+            target="_blank"
+            href={this.state.prob_content}
+          >
+            View Binary Source
+          </a>
         </div>
         <div>{this.state.prob_options}</div>
         <br />
